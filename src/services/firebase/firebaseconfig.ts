@@ -1,41 +1,56 @@
-// Demo Firebase configuration - Replace with actual Firebase config in production
-// For now, we'll create mock implementations to allow the app to run
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { getAnalytics } from 'firebase/analytics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface MockAuth {
-  currentUser: any;
-}
-
-interface MockDB {
-  collection: (name: string) => any;
-}
-
-interface MockStorage {
-  ref: (path: string) => any;
-}
-
-// Mock Firebase services for demo
-const auth: MockAuth = {
-  currentUser: null,
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBfXpuB6unaF3A1TdPOQ3p16ChMPI95MWE",
+  authDomain: "gharsathi.firebaseapp.com",
+  projectId: "gharsathi",
+  storageBucket: "gharsathi.firebasestorage.app",
+  messagingSenderId: "84563901929",
+  appId: "1:84563901929:web:bc4ab5221459a0bc185f78",
+  measurementId: "G-280EECP3G2"
 };
 
-const db: MockDB = {
-  collection: (name: string) => ({
-    doc: (id: string) => ({
-      get: () => Promise.resolve({ exists: false, data: () => null }),
-      set: (data: any) => Promise.resolve(),
-      update: (data: any) => Promise.resolve(),
-    }),
-    add: (data: any) => Promise.resolve({ id: 'mock-id' }),
-  }),
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase Auth with AsyncStorage persistence for React Native
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage)
+});
+
+// Initialize Firestore
+const firestore = getFirestore(app);
+const db = firestore; // Alias for backward compatibility
+
+// Initialize Storage
+const storage = getStorage(app);
+
+// Initialize Analytics (only works on web/supported platforms)
+let analytics;
+try {
+  analytics = getAnalytics(app);
+} catch (error) {
+  console.log('Analytics not supported on this platform');
+}
+
+// Google OAuth Configuration
+export const GOOGLE_CONFIG = {
+  webClientId: "84563901929-bcpq2hbnkqga6anoj6fr9fhb4vlir8ql.apps.googleusercontent.com",
+  // Add iOS and Android client IDs when you create them in Google Console
+  iosClientId: "", // Add your iOS client ID here
+  androidClientId: "", // Add your Android client ID here
 };
 
-const storage: MockStorage = {
-  ref: (path: string) => ({
-    put: (file: any) => Promise.resolve({ ref: { getDownloadURL: () => Promise.resolve('mock-url') } }),
-  }),
-};
-
-const analytics = null;
+export { auth, firestore, db, storage, analytics };
+export default app;
 
 // Mock Firebase functions for compatibility
 export const signInWithEmailAndPassword = (auth: any, email: string, password: string) => 
